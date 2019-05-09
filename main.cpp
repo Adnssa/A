@@ -10,35 +10,38 @@ using namespace std;
 
 /* vector<vector<int>> graph; */
 
-vector<vector<int>> getNewGraph(vector<vector<int>> gp, float prov) {
-    vector<int> deletedV;
-    vector<int> deletedE;
-    for (int i = 0; i < gp.size(); i++) {
+void fillRow(int** gp, int n, int row) {
+    for (int i = 0; i < n; i++) {
+    	gp[row][i] = 0;
+    }
+}
+
+void fillCol(int** gp, int n, int col) {
+    for (int i = 0; i < n; i++) {
+    	gp[i][col] = 0;
+    }
+}
+
+int** getNewGraph(int* gp, int n, float prov) {
+    for (int i = 0; i < n; i++) {
 		float pi = (float) rand()/RAND_MAX;
         if (pi < prov) {
-            deletedV.push_back(i+1);
+        	cout << "DELETED VERTEX" << i << endl;
+            fillRow(gp, n, i);
+            fillCol(gp, n, i);
         } else {
-            for (int j = 0; j < gp[i].size(); j++) {
+            for (int j = 0; j < n; j++) {
                 float pj = (float) rand()/RAND_MAX;
                 if (pj < prov) {
+                	cout << "DELETED EDGE I: " << i << " J: " << j << endl;
                     /* int aux = gp[i][j]; */
-                    deletedE.push_back(j+1);
+                    gp[i][j] = 0;
+                    gp[j][i] = 0;
                 }
             }
         }
-        
     }
-
-    for (int i = 0; i < deletedV.size(); i++) {
-        cout << "V" << i << endl;
-        cout << "VERTEX" << deletedV[i] << endl;
-    }
-    
-    for (int i = 0; i < deletedE.size(); i++) {
-        cout << "V" << i << endl;
-        cout << "EDGE" << deletedE[i] << endl;
-    }
-    
+    return gp;
 }
 
 int main() 
@@ -46,26 +49,47 @@ int main()
 	cout << "Hello, World!";
 
 	std::ifstream infile("adj.txt");
+	// int n = 3;
     int n = std::count(std::istreambuf_iterator<char>(infile), 
              std::istreambuf_iterator<char>(), '\n');
 
+    // CLEAR THE STREAM
+   	infile.close();
+   	infile.clear();
+   	infile.open("adj.txt");
+	// std::ifstream infile("adj.txt");
+   	 
+
 	std::string line;
-    cout << "N: " << n << endl;
+ //    cout << "N: " << n << endl;
     
-    int graph[n][n];
-    fill(graph.begin(), graph.end(), -1);
+    int graph[n][n] = {};
+    fill(*graph, *graph + n*n , 0);
     int i = 0;
 
+    
+
+    cout << "HOLA 1"<< endl;
 
 	while (std::getline(infile, line))
 	{
+	    cout << "E1" << endl;
 	    std::istringstream iss(line);
 	    int a, b, num;
 	    /* if (!(iss >> a >> b)) { break; } // error */
-        int j = 0;
+        bool first = true;
+        int index;
         while (iss >> num) {
-            graph[i][j] = num;
-            j++;
+		    cout << "E2" << endl;
+        	if (first)
+        	 {
+        	 	index = num;
+        	 	first = false;
+        	 } else {
+        	 	graph[index][num] = 1;
+        	 } 
+            cout << index;
+            cout << " - ";
             cout << num;
             cout << " ";
         }
@@ -74,19 +98,19 @@ int main()
 	    // process pair (a,b)
 		/* cout << a << " " << b << endl; */
 
-        /* graph.push_back(edges); */
-        i++;
+         // graph.push_back(edges); 
 	}
 
     /* cout << graph.size(); */
 
+    cout << "HOLA 2"<< endl;
     for (int i = 0; i < n; i++) {
         for (int j = 0; j < n; j++) {
             cout << "(I, J): (" << i << "," << j << ") = " << graph[i][j] << endl;
         }
     }
 
-    /* graph = getNewGraph(graph, 0.5); */
+    graph = getNewGraph(&graph, n, 0.5); 
     return 0;
 }
 
