@@ -53,7 +53,7 @@ int main()
     cout << "N: " << n << endl;
     
     int graph[n][n];
-    fill(graph.begin(), graph.end(), -1);
+    fill(graph.begin(), graph.end());
     int i = 0;
 
 
